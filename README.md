@@ -1,13 +1,18 @@
 # CV_GroupProject
+## Stereo Images: 
+<img src = "https://user-images.githubusercontent.com/26826339/190955153-2f683d21-5f59-45ca-a751-5a31bbbf8530.png" width = "300" height = "300"/> <img src = "https://user-images.githubusercontent.com/26826339/190955172-830278e7-f22c-428c-9b20-58a082964034.png" width = "300" height = "300"/>
+<br>
+### Depth Map: 
+<img src = "https://user-images.githubusercontent.com/26826339/190955068-4e75b18a-5adf-4f70-8492-a834bff36607.png" width = "400" height = "400"/>
 
 Make your own branch and then merge at last and not on master.
 
-Preprocessing steps:
+### Preprocessing steps:
 1) Load images in grayscale and reshape it to 500*500.
 2) Make it to float.
 3) Filter out the noise using gaussian and see if it gives better results.
 
-Prop ==>
+### Prop ==>
 Do all these calulations in floating points. 
 1) Pick all patches of (5x5) => (xL) from first image and see its max normalized cross-correlation on the parallel horizontal line in the second image => xR.
 2) Once found, compute d = (xR - xL) OR called disparity.
@@ -15,7 +20,7 @@ Do all these calulations in floating points.
 4) Scale this depth from float => 0-1 or or int => 0-255. If want to do viz => use cmap in plotlib.
 
 
-Semantics of calib.txt file terms => 
+### Semantics of calib.txt file terms => 
 
 cam0,1:        camera matrices for the rectified views, in the form [f 0 cx; 0 f cy; 0 0 1], where
   f:           focal length in pixels
