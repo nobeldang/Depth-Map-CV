@@ -1,26 +1,39 @@
-# CV_GroupProject
-## Stereo Images: 
+# Depth Map
+
+### Objective: <hr>
+
+Using a single camera it is not possible to estimate the distance of point P from the camera located at point O. All of the points in the projective line that P belongs to will map to the same points p in the image. Therefore, making it impossible to estimate the distance.
+
+![image](https://user-images.githubusercontent.com/26826339/191177609-46b2a8bf-9a58-4c73-8095-8249dc93d0dd.png)
+
+
+However there is a solution to this problem; a stereo camera system can be used. Therefore, here I will explore how we can use a parallel camera system to estimate depth of objects in an image from scratch, without using any libraries.
+
+![image](https://user-images.githubusercontent.com/26826339/191183474-bf84adb3-e6b5-476b-a42a-86dcd6928782.png)
+
+### Calculating depth(z): <hr>
+
+                      𝑑𝑖𝑠𝑝𝑎𝑟𝑖𝑡𝑦 (𝑑) = (𝑥𝑙 − 𝑥𝑟)   - (1) <br>
+                      𝑑𝑒𝑝𝑡ℎ (𝑧) = 𝑓*𝐵/d          - (2) <br>
+
+#### a. Image preprocessing<br>
+● Re-sizing stereo images to be of the same size (500, w). Here we used the cv2.resize() function to perform this action. This also helped in faster processing as originally the images were around (2000, 2000). Function ⇒ resizeImage().
+#### b. Disparity Calculation <br>
+● Once we have the stereo images of the same size, for each window patch in the left image, its correspondence location in the right image is retrieved by using normalized cross-correlation over the epipolar line. Functions ⇒ get_disparity_parallel(), compute_row() and norm_cross_correlation().<br>
+● Then, the disparity is calculated using equation (1) for the correspondence locations. Here, the get_disparity_parallel() calls the compute_row() that fetches the window patches from the left image one by one and passes it to the norm_cross_correlation(). Then, the norm_cross_correlation() returns the output correlated map over the epipolar line back to compute_row() and compute_row() calculates the correspondence location. Once we have the correspondence location, the compute_row() calculates the disparity.
+Functions ⇒ get_disparity_parallel(), compute_row() and norm_cross_correlation().
+#### c. Depth Estimation <br>
+● After having the disparity map, the depth of pixels is calculated using equation (2). Function ⇒ get_depth() <br>
+● Here, some pixels would have the depth of infinity as their disparity was zero, and for visualization purposes, this infinity value is handled by the function replace_inf().
+
+### Stereo Images: 
 <img src = "https://user-images.githubusercontent.com/26826339/190955153-2f683d21-5f59-45ca-a751-5a31bbbf8530.png" width = "300" height = "300"/> <img src = "https://user-images.githubusercontent.com/26826339/190955172-830278e7-f22c-428c-9b20-58a082964034.png" width = "300" height = "300"/>
 <br>
 ### Depth Map: 
 <img src = "https://user-images.githubusercontent.com/26826339/190955068-4e75b18a-5adf-4f70-8492-a834bff36607.png" width = "400" height = "400"/>
 
-Make your own branch and then merge at last and not on master.
 
-### Preprocessing steps:
-1) Load images in grayscale and reshape it to 500*500.
-2) Make it to float.
-3) Filter out the noise using gaussian and see if it gives better results.
-
-### Prop ==>
-Do all these calulations in floating points. 
-1) Pick all patches of (5x5) => (xL) from first image and see its max normalized cross-correlation on the parallel horizontal line in the second image => xR.
-2) Once found, compute d = (xR - xL) OR called disparity.
-3) After that compute depth using focal length. Formula z = (f*B)/d  where B is baseline and d is the disparity. iF have time make it (d+doff) for better results.
-4) Scale this depth from float => 0-1 or or int => 0-255. If want to do viz => use cmap in plotlib.
-
-
-### Semantics of calib.txt file terms => 
+### Semantics of calib.txt file terms => <hr>
 
 cam0,1:        camera matrices for the rectified views, in the form [f 0 cx; 0 f cy; 0 0 1], where
   f:           focal length in pixels
